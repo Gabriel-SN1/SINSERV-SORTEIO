@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sorteio de Nomes – SINDSERV Camacã</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#0b0607;--panel:#150b0d;--panel2:#1c0e11;--line:#2e171b;--tx:#f8f3f3;--mut:#b9a4a7;--red:#dc1f2e;--red2:#ff3b4a;--deep:#8f0f18;--ok:#5be28a;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;color:var(--tx);font:15px/1.5 "Plus Jakarta Sans","Segoe UI",system-ui,-apple-system,Roboto,sans-serif;min-height:100vh;background:radial-gradient(1000px 520px at 88% -10%,#4d0e16 0%,transparent 62%),radial-gradient(800px 480px at -10% 112%,#2b080c 0%,transparent 60%),var(--bg);background-attachment:fixed}
+.wrap{max-width:1120px;margin:0 auto;padding:22px 18px 10px}
+header{display:flex;align-items:center;justify-content:space-between;gap:14px;padding-bottom:18px;border-bottom:1px solid var(--line);margin-bottom:26px}
+.brand b,.ovTop b{font:italic 900 32px/1 Impact,"Arial Black",sans-serif;color:var(--red2);letter-spacing:.5px}
+.brand em,.ovTop em{display:block;font-style:normal;font-size:12px;color:var(--mut);margin-top:4px;font-weight:500}
+.date{font-size:13px;color:var(--mut);text-align:right}
+.date strong{display:block;color:var(--tx);font-size:14px;font-weight:600}
+h1{font-size:28px;line-height:1.15;margin:0 0 4px;font-weight:700;letter-spacing:-.02em}
+.sub{color:var(--mut);font-size:13.5px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0 14px}
+.card{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:16px 18px;box-shadow:0 1px 0 #ffffff08 inset,0 16px 36px -24px #000}
+.stat{display:flex;gap:14px;align-items:center}
+.ico{width:44px;height:44px;border-radius:12px;display:grid;place-items:center;background:#2a0f13;border:1px solid #4a1a20;color:#ff8a93;flex:none}
+.ico svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.stat span{display:block;color:var(--mut);font-size:12.5px}
+.stat b{font-size:26px;font-weight:700;line-height:1.15}
+.main{display:grid;grid-template-columns:1.55fr 1fr;gap:14px}
+.stage{text-align:center;padding:26px 18px 22px}
+.ring{position:relative;width:min(330px,76vw);aspect-ratio:1;margin:20px auto 24px;border-radius:50%;display:grid;place-items:center;background:#0e0709;box-shadow:0 0 70px -16px #dc1f2ecc}
+.ring::before{content:"";position:absolute;inset:0;border-radius:50%;padding:6px;background:conic-gradient(#8f0f18,#ff3b4a,#fff,#ff3b4a,#8f0f18);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+.ring.spin::before{animation:rot .9s linear infinite}
+.ring.spin{animation:glow .45s infinite alternate}
+.ring.win{animation:pop .6s;box-shadow:0 0 90px -6px #ff3b4a}
+@keyframes rot{to{transform:rotate(360deg)}}
+@keyframes glow{to{box-shadow:0 0 90px -8px #ff3b4a}}
+@keyframes pop{0%{transform:scale(.88)}55%{transform:scale(1.07)}100%{transform:scale(1)}}
+.inner{padding:0 26px;width:100%}
+.lbl{font-size:13px;color:var(--mut);font-weight:500}
+#name{font-size:clamp(22px,4.6vw,32px);font-weight:700;line-height:1.15;margin:6px 0;word-break:break-word;letter-spacing:-.01em}
+#name.blur{filter:blur(1px)}
+#msg{color:#ff8a93;font-size:14px;min-height:21px}
+button{font:inherit;font-weight:500;color:var(--tx);cursor:pointer;border-radius:10px;border:1px solid var(--line);background:#1b0d10;padding:10px 14px;transition:border-color .15s,background .15s}
+button:hover{border-color:#6a2a31;background:#26121a}
+button:focus-visible,input:focus-visible{outline:2px solid var(--red2);outline-offset:2px}
+.go{width:min(380px,100%);padding:15px 22px;font-size:16px;font-weight:700;border:0;border-radius:12px;background:linear-gradient(180deg,#ec2a39,#b5121e);box-shadow:0 12px 28px -12px #dc1f2e}
+.go:hover{background:linear-gradient(180deg,#ff3b4a,#c3151f)}
+.go:disabled{opacity:.55;cursor:default}
+.row{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:14px}
+.row button{font-size:13.5px}
+.side h3{margin:0;font-size:16px;font-weight:700}
+.tabs{display:flex;gap:6px;background:#0e0709;border:1px solid var(--line);border-radius:12px;padding:4px;margin-bottom:12px}
+.tabs button{flex:1;border:0;background:transparent;padding:8px;font-size:13.5px;color:var(--mut)}
+.tabs button.on{background:#2a0f13;color:var(--tx)}
+#sq{width:100%;margin-bottom:6px;padding:10px 12px;background:#0e0709;color:var(--tx);border:1px solid var(--line);border-radius:10px;font:inherit;font-size:14px}
+ul{list-style:none;margin:0;padding:0;height:330px;overflow:auto}
+li{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:9px 2px;border-bottom:1px solid var(--line);font-size:14px}
+li span em{font-style:normal;display:inline-block;min-width:34px;color:#ff8a93;font-variant-numeric:tabular-nums;font-weight:600}
+li i{font-style:normal;color:var(--mut);font-size:12px;white-space:nowrap}
+.tag{font-size:11px;padding:2px 9px;border-radius:99px;background:#2a0f13;color:#ff8a93}
+.tag.ok{background:#12261a;color:var(--ok)}
+.empty{color:var(--mut);font-size:13.5px;padding:14px 2px}
+.ghosts{display:flex;gap:8px;margin-top:12px}
+.ghosts button{flex:1;font-size:13px;background:transparent}
+footer{max-width:1120px;margin:22px auto 0;padding:16px 18px 28px;border-top:1px solid var(--line);color:var(--mut);font-size:12.5px;text-align:center;line-height:1.7}
+dialog{background:var(--panel);color:var(--tx);border:1px solid var(--line);border-radius:16px;width:min(520px,92vw);padding:20px}
+dialog::backdrop{background:#000b}
+textarea{width:100%;height:200px;background:#0e0709;color:var(--tx);border:1px solid var(--line);border-radius:10px;padding:10px;font:inherit;resize:vertical}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:50}
+#ov{position:fixed;inset:0;z-index:40;display:none;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:90px 24px 24px;background:radial-gradient(1000px 640px at 50% 38%,#8a0f1b 0%,#3a060c 55%,#0a0304 100%)}
+#ov.show{display:flex}
+.ovTop{position:absolute;top:0;left:0;right:0;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:calc(16px + env(safe-area-inset-top,0px)) 28px 16px;border-bottom:1px solid #ffffff22;font-size:14px;color:#f1dcdd}
+.ovTop em{margin:0}
+.ovLbl{font-size:clamp(16px,2.2vw,26px);color:#ffb3b9;font-weight:500}
+#ovName{font-size:clamp(40px,10vw,150px);font-weight:800;line-height:1.05;max-width:96vw;word-break:break-word;margin:14px 0;letter-spacing:-.02em}
+#ovName.spin{filter:blur(.8px);opacity:.92}
+#ovName.win{animation:pop .6s;text-shadow:0 0 70px #ff3b4a99}
+#ovMsg{font-size:clamp(20px,3.4vw,36px);opacity:.9;min-height:1.3em}
+#ovClose{margin-top:26px;font-size:17px;padding:13px 30px;border-radius:999px;background:transparent;border:1px solid #ffffff66}
+#ovClose:hover{background:#ffffff18}
+@media(max-width:860px){.stats{grid-template-columns:1fr 1fr}.main{grid-template-columns:1fr}}
+@media(prefers-reduced-motion:reduce){.ring.spin::before,.ring.spin{animation:none}}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div class="wrap">
+<header>
+<div class="brand"><b>SINDSERV</b><em>Camacã – Sindicato dos Servidores Públicos do Município</em></div>
+<div class="date"><strong>31 de outubro de 2026</strong>Sorteio oficial</div>
+</header>
+
+<h1>Sorteio de nomes</h1>
+<div class="sub">Um participante por vez. Quem já foi sorteado não entra novamente.</div>
+
+<div class="stats">
+<div class="card stat"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="9" cy="8" r="3.2"/><path d="M3 20c0-3.3 2.7-5.5 6-5.5s6 2.2 6 5.5"/><circle cx="17.5" cy="9" r="2.4"/><path d="M17 14.5c2.4.2 4 1.9 4 4.5"/></svg></div><div><span>Participantes</span><b id="sTot">0</b></div></div>
+<div class="card stat"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l2.7 2.7L16 9.5"/></svg></div><div><span>Já sorteados</span><b id="sDone">0</b></div></div>
+<div class="card stat"><div class="ico"><svg viewBox="0 0 24 24"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r=".8"/><circle cx="4" cy="12" r=".8"/><circle cx="4" cy="18" r=".8"/></svg></div><div><span>Restantes</span><b id="sLeft">0</b></div></div>
+<div class="card stat"><div class="ico"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></div><div><span>Último sorteado</span><b id="sLast" style="font-size:15px;font-weight:600">—</b></div></div>
+</div>
+
+<div class="main">
+<div class="card stage">
+<div class="ring" id="ring"><div class="inner">
+<div class="lbl">Nome sorteado</div>
+<div id="name">—</div>
+<div id="msg"></div>
+</div></div>
+<button class="go" id="go">Sortear próximo</button>
+<div class="row">
+<button id="add">Adicionar participantes</button>
+<button id="imp">Importar lista (Excel ou CSV)</button>
+</div>
+<input type="file" id="file" accept=".xlsx,.xls,.csv,.txt" hidden>
+</div>
+
+<div class="card side">
+<div class="tabs"><button id="tHist" class="on">Sorteados</button><button id="tAll">Participantes</button></div>
+<input id="sq" type="search" placeholder="Buscar participante…" hidden>
+<div class="sub" id="cnt" style="margin-bottom:4px"></div>
+<ul id="plist"></ul>
+<div class="ghosts"><button id="reset">Reiniciar sorteio</button><button id="clear">Limpar lista</button></div>
+</div>
+</div>
+</div>
+
+<footer>Sindicato dos Servidores Públicos do Município de Camacã – CNPJ 05.844.115/0001-86<br>Rua Bahia, 117, Centro, Camacã – BA, CEP 45880-000</footer>
+
+<div id="ov"><div class="ovTop"><div><b>SINDSERV</b><em>Camacã</em></div><span>Sorteio de nomes – 31/10/2026</span></div><div class="ovLbl" id="ovLbl">Sorteando…</div><div id="ovName"></div><div id="ovMsg"></div><button id="ovClose" hidden>Fechar</button></div>
+
+<dialog id="dlg">
+<h3 style="margin:0 0 8px">Adicionar participantes</h3>
+<div class="sub" style="margin-bottom:8px">Cole os nomes, um por linha.</div>
+<textarea id="ta" placeholder="Maria Silva&#10;João Pereira&#10;Ana Costa"></textarea>
+<div class="btns">
+<button id="okAdd" style="background:var(--red);border:0;font-weight:700">Adicionar à lista</button>
+<button id="okRep">Substituir lista</button>
+<button id="cancel">Cancelar</button>
+</div>
+</dialog>
+
+<script>
+(function(){
+var KEY="sindserv-camacan-v2";
+var NAMES=["Abeluede Dantas Muniz", "Abmael Oliveira Maciel", "Ada Gerusa Nascimento Santos", "Adilso Góis Reis", "Adilson Pinheiro de Santana", "Adilson Ribeiro Alves Araújo", "Adonias André da Rocha", "Adriana Evangelista da Silva", "Adriana Sena Ramos", "Aildes Santana Alves", "Alan Santos Silva", "Alan Silva Souza", "Alberto Carlos Barbosa de Araújo", "Alberto Ferreira de Souza", "Alcione Silva da purificação", "Alda Barbosa de Santana Silva", "Aldenor Alves", "Aldeny Soares de Oliveira", "Alessandra Santos Araújo", "Alex Emanoel Santos Ferraz", "Alex passos Matos", "Almerides Pinto Santos", "Almira Pinto Santos", "Amanda Ribeiro Reis", "Ana Angélica Costa Santos", "Ana Paula Nascimento dos Santos", "Ana Paula Nunes de Jesus", "Anselmo Souza Santos", "Anderson Carvalho Santana", "Andrea Santos Oliveira", "Andreia da Silva Santos", "Anderson Jânio Correia da Silva", "Antônio Eduardo Soares Costa", "Antônio Gabriel da Silva", "Antônio Souza Bezerra", "Antônio Souza dos Santos", "Aparecida Angélica Marques Ferraz", "Bruna Eduarda Cruz Almeida", "Caliana Alves dos Anjos", "Carlesandra Figueira Lopes", "Carlos Alberto Braga de Oliveira", "Carlos Henrique Seara da Costa", "Carlos Jorge Silva Lima", "Catiane Soares Pereira", "Celidalva de Paula dos Santos Silva", "Celsa da paixão leal", "Cíntia Vieira Santos", "Claudeane Nunes Dias", "Claudeci Oliveira Santos", "Cláudia Moreira dos Santos", "Cláudia Valéria Santos de Souza", "Claudiomar Silva Cardoso", "Cléber Silva dos Santos", "Cleide Silva Oliveira", "Cleonice Oliveira dos Santos", "Cosme Silva Santana", "Cosme Sousa Miranda", "Cristiane bispo dos Santos", "Cristiane Muniz dos Santos", "Cristiane Nascimento Menezes", "Cristiane Santos da Silva", "D'ajuda Cristina Silva Brito", "Daiane Fernanda Ribeiro", "Danilo Bianch das Neves", "Darlianny de Carvalho Santos", "Débora Alves de Almeida", "Débora Ramos Chaves Alexandrino", "Débora Silva de Souza", "Deilza Santos Vasconcelos", "Denise Morais pimenta", "Denison Santos Bezerra", "Derivaldo Silva de Souza", "Dilma bispo dos Santos", "Dilson José Vieira", "Djalma Seara da Silva", "Domingos Dias dos Santos Júnior", "Domingos dos Santos Silva", "Ederlan Batista dos Santos", "Edézio Vitória da Rocha", "Ediane Santos da Silva", "Edna Bahia do Nascimento Oliveira", "Edna de Jesus Medrado", "Elano Castro Pereira", "Eliane Santos Cerqueira Oliveira", "Elias André da Rocha", "Eliene Maria de Assis Rodrigues", "Eliudes Emídio de Assis Santos", "Elizete Rodrigues Ribeiro", "Eloyna Dias dos Santos", "Elza de Souza Guimarães", "Enésio da Silva Batista", "Eniza Lopes dos Santos", "Éricka Almeida Santos", "Erlane Francisco dos Santos", "Erlânio Nascimento da Silva", "Erlison leite Oliveira", "Esmeraldino Jesus Santos", "Eudásio Rocha dos Santos", "Eumara Vilas Boas Santos", "Eudes alberes Marinho", "Evandro Mendes Garcia", "Evandro Soares de Azevedo", "Everton Batista Araújo", "Fabiana Souza Santos", "Fábio bispo Lima Vasconcelos", "Fábio Costa da Silva", "Fábio Moreira da Silva", "Fernanda Ferreira dos Santos", "Fernanda Flora de Jesus Alves", "Fernando da Silva", "Flávia Cristina Matos Santos", "Flávia Moreira Silva", "Fledson José dos Santos", "Fransérgio Moreira Santos", "Fredson Ramos de Oliveira", "Gabryelle Souza Seara", "Genan José Ferreira", "Georgia Marques Santos", "Geovane Raimundo Oliveira Silva", "Gerson Xavier da Silva Neto", "Gidevaldo Nonato dos Santos", "Gildázio dos Santos Almeida da Silva", "Gildete dos Santos Sena", "Gilmara Rocha Santos", "Gilvan da Boa morte lírio", "Gilvan Silva de Souza", "Gláucia Araújo Maia", "Gleidson Alves Diniz", "Grace Kelly Santos Nunes Silva", "Gracineide Gonçalves da Silva", "Gredison bispo dos Santos", "Hamilton Luiz dos Santos Bomfim", "Henrique Joaquim da Silva Filho", "Heráclito Alves Lima", "Horley Carvalho Ferreira", "Hozanar dias de Andrade", "Igor Vinícius Martins Botelho", "Ilson Conceição Silva", "Iolanda Siqueira de Oliveira bispo", "Ionê Porto de Paula", "Iraildes Dantas de Oliveira", "Iraildes Oliveira Alves", "Iranildes Araújo dos Santos", "Irenildes Ribeiro do Monte", "Irenildes Rocha Simões", "Isaías de Souza Mendonça", "Itamar Almeida Vitória", "Ivan da Silva Santos", "Ivantelio José Cerqueira", "Jackson dos Santos Farias", "Jackson Ramos Oliveira", "Jailson Alves de Souza", "Jairene Silva Santos", "Jamile Fonseca Borges", "Jane Gleide Souza Mota", "Janilson Souza de Jesus", "Janinne Marques Carvalho", "Jânio Damasceno dos Santos", "Jânio Souza Mota", "Jaqueline Oliveira Santana", "Jaqueline Santos Souza Reis", "Jasson Cerqueira de Oliveira", "Jean Ribeiro dos Santos", "Jeane pureza bispo dos Santos", "Jeniautre da Silva Rosa", "Jenilson Muniz de Souza", "Jilmar Santos de Jesus", "Jilvan Alves de Oliveira", "Jirlene dos Santos Oliveira", "Joana Carla Souza Ramos", "João Cardoso Santos", "João de Souza Guimarães sobrinho", "Joaldo Andrade Aragão", "Jobilio bispo dos Santos", "Josiane Oliveira dos Santos", "Jocleides Maria Souza Mota", "Joelita Maria Vieira", "Joelma Lima de Souza", "Joenilda Almeida dos anjos", "Jones Silveira Freitas", "Jorge Leôncio Soares", "Jorge Luiz da Silva Lopes", "Josafá Alves Matos", "José bispo do Nascimento", "José Carlos Souza da Silva", "José Raimundo Ribeiro de Souza", "José Roberto Duarte Cardoso", "José Silva Santos", "José Wilton Silva de Araújo", "Joseane de Jesus Santos", "Joseleide Santos Souza Nery", "Joseleuza Fernandes da Silva", "Josemar Oliveira Lima", "Josenilda Silva Santos", "Josenilson Neres", "Josilene Alves de Souza", "Josseilma Rocha de Jesus", "Joziane Santos Miranda", "Juarez Mendes Ferreira", "Jucélia Calo Cruz", "Júlio César Silva Araújo", "Karliane Reis", "Kátia Santos Moreira", "Kátia Simone Soares Pereira", "Keuliany Araújo Santos Pereira", "Ladislau Francelino Pardinho Neto", "Leildes Dias da Silva", "Leilian Santos de Castro", "Leilianne Cardoso dos Santos", "Leilson de Jesus Marambaia", "Leire do ouro Santos", "Lenilda Souza Caetano", "Leonildo de Souza Nunes", "Letícia do ouro Nunes", "Lilian Karine Soares Azevedo", "Lilian Conceição Cardoso", "Linsmar de Assis Ferreira", "Lívia Silva Moraes cardeal", "Lourivaldo Rodrigues de Sá Filho", "Luciana Ribeiro Silva", "Luciene Santos Silva", "Lucy Glaidy Barreto do Rosário Brandão", "Luzenir Souza Santos", "Luzia de Souza Sampaio", "Luzia Pereira dos Santos", "Magno Teixeira de Souza", "Magnólia Pinheiro Gomes", "Maiane Santos Matos", "Maísa Gualberto Nery", "Marcelo Cardoso Figueiredo", "Marcelo Ezequiel Mota", "Márcia Ferreira da Silva", "Márcia Gomes da Rocha", "Márcio André Ribeiro tanajura", "Márcio paixão Nascimento", "Marcos Coelho Santana", "Marcos José dos Santos", "Marcos Nunes de Menezes", "Marcos Oliveira dos Santos", "Marcos paixão Nascimento", "Jobson da Silva Alencar", "Marcos Santos de Lisboa", "Marcos Souza Barreto", "Marcos Willis Sousa Lima", "Margarida Eugênia dos Santos", "Maria da Cruz Rocha", "Maria Dajuda dos Santos tinum", "Maria de Araújo Santos", "Maria José de Souza Carvalho", "Maria José Pereira Vasconcelos Santos", "Maria Lúcia de Jesus", "Maria milze Gonçalves dos Santos", "Maria Nilza dos Santos", "Maria Selma Bomfim de Jesus Gama", "Maria Simone Batista dos Santos", "Maria Sofia Pires Cardoso Marques", "Maria Tânia Rodrigues da Silva", "Maria Valdineide Alves Santana Gomes", "Marília Dantas de Sá", "Marina Ilária dos Santos Pinheiro", "Marineuza dos Santos", "Maritânia Nunes de Araújo", "Marli Silva Santos", "Marlon Ventura Santos", "Mateus Nunes Menezes", "Maurílio Araújo Alves", "Maxandreia Souza de Almeida", "Maxsione Souza de Almeida", "Maxsuel Nunes Lima", "Maxsuele Castro da encarnação", "Milena Viana Guimarães", "Miriam Bahia do Nascimento", "Miriam Gonçalves Santos", "Miriam José de Souza", "Mismare de Souza Silva", "Mônica Neves de Andrade", "Mônica Ribeiro Matos", "Mônica Soares de Brito", "Nailda Santos Couto", "Natalice Santos Rodrigues", "Nataniel Cardoso Santos", "Neuzete Cardoso Santos", "Nilcilene Bahia do Nascimento Souza", "Nildete Conceição Cardoso", "Nilzete Carneiro Pinheiro", "Nilzete Neckel", "Nivaldo Rosa dos Santos", "Norma Meire Ribeiro da Cruz", "Nourival Silva Araújo Júnior", "Núbia Brito de Figueiredo", "Núbia Lafaiete de Jesus Silva", "Odete Dias de Oliveira", "Ouriânia bispo Silva", "Patrícia Rodrigues Souza", "Patrícia Santana Silva", "Paulo Abel Almeida Moreira", "Paulo Claudino dos Santos", "Paulo Rodrigues Santos", "Priscila Barreto dos Santos", "Quennedy Cardoso laytynher", "Quésia Nascimento Monteiro dos Santos", "Railda Costa Santos", "Raimundo José Pitanga", "Reginaldo Oliveira Alves", "Reginaldo Teixeira Porto", "Rejilvan Teixeira Porto", "Renata Pereira da Silva", "Renato Lima Deodato", "Reuter Brito Rocha", "Ricardo Henrique Bernardes", "Rita de Cássia Figueira Lopes", "Rivanna Keilla Ferraz Costa", "Roberto da Silva Gomes", "Roberto Muniz de Melo", "Roberval Costa dos Santos", "Rony von Oliveira de Castro Brandão", "Roque Batista da Cruz", "Roque Souza Santos", "Rosalvo José dos Santos", "Rosana Góis Reis", "Roseane Alves Pereira", "Roseni Ferreira da Silva", "Rosineide Sabino dos Santos", "Rozilene Farias Santos Mendonça", "Rubny Santos de Oliveira", "Sabrina de Jesus Santos", "Sandra Campos bispo", "Sandra Catiuscia Santos calado", "Sandra de Santana Santos", "Sandra gois Reis", "Sandra Maria Silva", "Sandra Marise Santos Costa", "Sandra Rosa de Jesus", "Saralene Bárbara de Souza Santos", "Sayonara Nascimento dos Santos", "Sidney da Silva Gomes", "Simone Cardoso Lacerda", "Sueli Bahia do Nascimento ourives", "Suzana Oliveira Santos", "Taís Rodrigues Santos", "Tâni Márcia Ribeiro tanajura Miranda", "Tarcízio Oliveira dos Santos", "Tatiana dos Santos", "Uelington Silva", "Uellimeire Nogueira Souza", "Uellington Pereira Nascimento", "Uelmison Vieira Rocha", "Valdeck de Oliveira Santos", "Valdinéia Santos do Nascimento", "Valdinete Carvalho dos Santos", "Valdir de Jesus Santos", "Valdir Silva Veloso", "Valtecy José do Nascimento", "Vanessa Conceição", "Vânia Maria dos Santos Souza", "Vanildo Santos Galvão", "Vanisson Santana Reis", "Vinícius Nascimento Casquilho", "Waldemar Oliveira", "Waldirene Oliveira Santos", "Waldson Vilas Boas Santos", "Waney Santos de Araújo", "Waxuell Silva de Oliveira", "Wellington Carlos da Silva", "Wilds José de Oliveira Souza", "Zélia Santos Sena", "Zinair Maria da hora"];
+var S={people:NAMES.map(function(n){return {n:n,done:false}}),hist:[]};
+var busy=false,tab="hist";
+var $=function(i){return document.getElementById(i)};
+try{var raw=localStorage.getItem(KEY);if(raw){var p=JSON.parse(raw);if(p&&p.people)S=p}}catch(e){}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function pad(n){return String(n).padStart(2,"0")}
+function stamp(t){var d=new Date(t);return pad(d.getDate())+"/"+pad(d.getMonth()+1)+" "+pad(d.getHours())+":"+pad(d.getMinutes())}
+function rnd(n){var a=new Uint32Array(1);crypto.getRandomValues(a);return a[0]%n}
+function left(){return S.people.filter(function(x){return !x.done})}
+function esc(s){var d=document.createElement("div");d.textContent=s;return d.innerHTML}
+
+function renderSide(){
+var q=$("sq").value.trim().toLowerCase(),html="";
+if(tab==="hist"){
+$("cnt").textContent=S.hist.length?S.hist.length+" sorteado(s)":"";
+html=S.hist.map(function(h,i){return "<li><span><em>"+(S.hist.length-i)+"º</em>"+esc(h.n)+"</span><i>"+stamp(h.t)+"</i></li>"}).join("")||"<div class='empty'>Nenhum sorteio realizado ainda.</div>";
+}else{
+var a=S.people.filter(function(p){return !q||p.n.toLowerCase().indexOf(q)>-1});
+$("cnt").textContent=a.length+" de "+S.people.length+" participantes";
+html=a.map(function(p){return "<li><span>"+esc(p.n)+"</span><i class='tag"+(p.done?"":" ok")+"'>"+(p.done?"Sorteado":"Aguardando")+"</i></li>"}).join("")||"<div class='empty'>Nenhum nome encontrado.</div>";
+}
+$("plist").innerHTML=html;
+}
+function render(){
+var tot=S.people.length,rest=left().length;
+$("sTot").textContent=tot;$("sDone").textContent=tot-rest;$("sLeft").textContent=rest;
+$("sLast").textContent=S.hist[0]?S.hist[0].n:"—";
+$("go").disabled=busy||rest===0;
+$("go").textContent=rest===0&&tot>0?"Sorteio concluído":"Sortear próximo";
+if(tot===0&&!busy){$("name").textContent="Adicione nomes";$("msg").textContent="Cole ou importe a lista para começar."}
+renderSide();
+}
+function setTab(t){tab=t;$("tHist").classList.toggle("on",t==="hist");$("tAll").classList.toggle("on",t==="all");$("sq").hidden=t!=="all";renderSide()}
+$("tHist").onclick=function(){setTab("hist")};
+$("tAll").onclick=function(){setTab("all")};
+$("sq").oninput=renderSide;
+
+function addNames(list,replace){
+var objs=list.map(function(s){return String(s==null?"":s).trim()}).filter(Boolean).map(function(n){return {n:n,done:false}});
+if(replace){S.people=objs;S.hist=[]}else S.people=S.people.concat(objs);
+save();render();
+}
+
+var MSG=["Embaralhando os nomes…","Quase lá…"];
+function draw(){
+var pool=left();if(busy||!pool.length)return;
+busy=true;$("go").disabled=true;
+var winner=pool[rnd(pool.length)];
+var ring=$("ring"),nm=$("name"),msg=$("msg"),ov=$("ov"),on=$("ovName"),om=$("ovMsg");
+ring.classList.remove("win");ring.classList.add("spin");nm.classList.add("blur");
+ov.classList.add("show");$("ovClose").hidden=true;on.className="spin";on.textContent="";$("ovLbl").textContent="Sorteando…";
+var total=3000,t0=performance.now(),mi=0;
+function setMsg(){msg.textContent=om.textContent=MSG[mi%MSG.length];mi++}
+setMsg();var mt=setInterval(setMsg,1500);
+(function tick(){
+var el=performance.now()-t0;
+if(el>=total){clearInterval(mt);finish();return}
+var nn=S.people[rnd(S.people.length)].n;nm.textContent=nn;on.textContent=nn;
+setTimeout(tick,40+Math.pow(el/total,3)*320);
+})();
+function finish(){
+ring.classList.remove("spin");ring.classList.add("win");nm.classList.remove("blur");
+nm.textContent=winner.n;msg.textContent="Parabéns!";
+on.textContent=winner.n;on.className="win";om.textContent="Parabéns!";$("ovLbl").textContent="Servidor sorteado";$("ovClose").hidden=false;
+winner.done=true;S.hist.unshift({n:winner.n,t:Date.now()});save();
+busy=false;render();confetti();
+}
+}
+$("go").onclick=draw;
+function closeOv(){if(!$("ovClose").hidden)$("ov").classList.remove("show")}
+$("ovClose").onclick=closeOv;
+document.addEventListener("keydown",function(e){if(e.key==="Escape")closeOv()});
+
+function confetti(){
+var c=$("fx"),x=c.getContext("2d");c.width=innerWidth;c.height=innerHeight;
+var cols=["#dc1f2e","#ff3b4a","#ffffff","#ffd1d4","#8f0f18"];
+var ps=[];for(var i=0;i<170;i++)ps.push({x:innerWidth/2,y:innerHeight/2.2,vx:(Math.random()-.5)*17,vy:-Math.random()*16-4,s:5+Math.random()*6,r:Math.random()*6,c:cols[i%5]});
+var f=0;
+(function a(){
+x.clearRect(0,0,c.width,c.height);
+ps.forEach(function(p){p.x+=p.vx;p.y+=p.vy;p.vy+=.35;p.r+=.2;x.save();x.translate(p.x,p.y);x.rotate(p.r);x.fillStyle=p.c;x.fillRect(-p.s/2,-p.s/2,p.s,p.s*.6);x.restore()});
+if(++f<150)requestAnimationFrame(a);else x.clearRect(0,0,c.width,c.height);
+})();
+}
+
+$("add").onclick=function(){$("ta").value="";$("dlg").showModal()};
+$("cancel").onclick=function(){$("dlg").close()};
+function fromTa(){return $("ta").value.split(/\r?\n/)}
+$("okAdd").onclick=function(){addNames(fromTa(),false);$("dlg").close()};
+$("okRep").onclick=function(){if(confirm("Substituir a lista atual e apagar o histórico?")){addNames(fromTa(),true);$("dlg").close()}};
+$("imp").onclick=function(){$("file").click()};
+$("file").onchange=function(e){
+var f=e.target.files[0];if(!f)return;
+var r=new FileReader(),isX=/\.xlsx?$/i.test(f.name);
+r.onload=function(){
+try{
+var names=[];
+if(isX){
+var wb=XLSX.read(r.result,{type:"array"});
+XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1}).forEach(function(row){if(row&&row[0]!=null)names.push(row[0])});
+}else{
+String(r.result).split(/\r?\n/).forEach(function(l){names.push(l.split(/[;,\t]/)[0].replace(/^"|"$/g,""))});
+}
+if(names.length&&/^(nome|name|participante)s?$/i.test(String(names[0]).trim()))names.shift();
+var rep=S.people.length&&confirm("Substituir a lista atual? OK = substituir, Cancelar = adicionar ao final.");
+addNames(names,!!rep);
+}catch(err){alert("Não consegui ler o arquivo. Use uma planilha com os nomes na primeira coluna.")}
+e.target.value="";
+};
+if(isX)r.readAsArrayBuffer(f);else r.readAsText(f);
+};
+$("reset").onclick=function(){if(busy)return;if(confirm("Devolver todos os nomes ao sorteio e apagar o histórico?")){S.people.forEach(function(p){p.done=false});S.hist=[];save();$("name").textContent="—";$("msg").textContent="";$("ring").classList.remove("win");render()}};
+$("clear").onclick=function(){if(busy)return;if(confirm("Apagar todos os nomes e o histórico?")){S={people:[],hist:[]};save();render()}};
+render();
+})();
+</script>
+</body>
+</html>
